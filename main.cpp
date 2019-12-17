@@ -19,7 +19,7 @@ public:
 };
 
 
-class CpuMetrics : public Collector {
+class CpuCollector : public Collector {
 public:
     float load1 = 0;
     float load5 = 0;
@@ -27,7 +27,7 @@ public:
     int processCount = 0;
     float parsingTime = 0;
 
-    CpuMetrics() {
+    CpuCollector() {
         this->regex = std::regex(R"((\d+.\d+)\s(\d+.\d+)\s(\d+.\d+)\s\d+\/(\d+)\s\d+)");
         this->procPath = "/proc/loadavg";
     }
@@ -65,7 +65,7 @@ public:
 };
 
 
-struct MemoryMetrics {
+struct MemoryCollector {
 
 };
 
@@ -73,7 +73,7 @@ struct MemoryMetrics {
 int main() {
 
 
-    auto cpu = CpuMetrics();
+    auto cpu = CpuCollector();
     cpu.collect();
 
     printf("%s", cpu.toString().c_str());
