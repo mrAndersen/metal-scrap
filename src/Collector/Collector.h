@@ -12,8 +12,6 @@ class Collector {
 protected:
     std::string procPath;
     std::regex regex;
-
-    int collectPeriodMs = 1000;
     std::vector<Node *> collected;
 public:
     Collector();
@@ -24,7 +22,7 @@ public:
 
     virtual void clear();
 
-    virtual std::vector<Node *> getCollectedData();
+    virtual const std::vector<Node *> &getCollectedData();
 
     virtual int getCollectPeriodMs() = 0;
 

@@ -8,9 +8,8 @@ int main() {
     CpuCollector cpuCollector;
 
     f.addCollector(&cpuCollector);
-    f.processCollectors();
+    f.work();
 
 
-//    fmt::printf("Size: %d", cpuCollector.getCollectedData().size());
     return 0;
 }

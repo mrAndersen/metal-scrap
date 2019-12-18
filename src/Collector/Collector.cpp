@@ -10,7 +10,7 @@ std::string Collector::readFile(const std::string &path) {
     return string;
 }
 
-std::vector<Node *> Collector::getCollectedData() {
+const std::vector<Node *> &Collector::getCollectedData() {
     return this->collected;
 }
 
