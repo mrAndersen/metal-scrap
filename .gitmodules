@@ -1,3 +1,6 @@
 [submodule "vendor/fmt"]
 	path = vendor/fmt
 	url = git@github.com:fmtlib/fmt.git
+[submodule "vendor/clickhouse"]
+	path = vendor/clickhouse
+	url = git@github.com:artpaul/clickhouse-cpp.git
