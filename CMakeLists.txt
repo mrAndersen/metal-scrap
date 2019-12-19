@@ -25,7 +25,7 @@ set(
 
         src/Clickhouse.cpp
         src/Clickhouse.h
-)
+        src/util.h src/util.cpp test/test.h test/test.cpp test/test.cpp test/test.h)
 
 
 add_executable(metal_scrapper ${SOURCES})
