@@ -3,32 +3,50 @@
 
 #include <clickhouse/client.h>
 #include <fmt/printf.h>
+#include <mutex>
+#include <iostream>
+#include <thread>
+#include "util.h"
+#include "Master.h"
+
+class Master;
 
 class Clickhouse {
 protected:
-    clickhouse::Client *client;
+    Master *master;
 
-    std::string host;
-    int port;
-    std::string user;
-    std::string password;
+    clickhouse::Client *client;
+    std::mutex connectionMutex;
+
+    std::string host = "localhost";
+    int port = 9000;
+    std::string user = "default";
+    std::string password = "";
+
+    bool writeFloatBlock(const std::vector<std::pair<std::string, float>> &buffer);
+
+    bool writeStringBlock(const std::vector<std::pair<std::string, std::string>> &buffer);
 
 public:
-    Clickhouse(
-            const std::string &host = "localhost",
-            const int &port = 9000,
-            const std::string &user = "default",
-            const std::string &password = ""
-    );
+    Clickhouse(const std::string &host = "localhost",const int &port = 9000);
 
     bool connect();
 
-    bool ping();
+    bool isConnected();
 
     void tryCreateTables();
 
-    bool write(const std::vector<std::pair<std::string, std::string>> &buffer);
+    bool write(std::vector<std::pair<std::string, std::string>> *buffer);
 
+    void setHost(const std::string &host);
+
+    void setPort(int port);
+
+    void setUser(const std::string &user);
+
+    void setPassword(const std::string &password);
+
+    void setMaster(Master *master);
 };
 
 

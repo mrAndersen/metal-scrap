@@ -1,8 +1,6 @@
+
 #include "util.h"
-#include <fmt/format.h>
-#include <ctime>
-#include <cstdarg>
-#include <regex>
+
 
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
@@ -11,6 +9,13 @@
 #define ANSI_COLOR_MAGENTA "\x1b[35m"
 #define ANSI_COLOR_CYAN    "\x1b[36m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
+
+std::string read_file(const std::string &path) {
+    std::ifstream t(path);
+    std::string string((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+
+    return string;
+}
 
 /**
  *
@@ -55,7 +60,7 @@ void message_ok(const char *fmt, ...) {
     va_end(args);
 }
 
-bool is_float_fast(const std::string &string) {
+bool is_float(const std::string &string) {
     for (auto &c:string) {
         if (c == 44 || c == 47) {
             return false;
@@ -67,4 +72,9 @@ bool is_float_fast(const std::string &string) {
     }
 
     return true;
+}
+
+bool file_exists(const std::string &path) {
+    struct stat buffer = {};
+    return (stat(path.c_str(), &buffer) == 0);
 }

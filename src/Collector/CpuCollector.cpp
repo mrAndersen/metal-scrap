@@ -4,7 +4,6 @@
 #include "Collector.h"
 #include "../Node/CpuNode.cpp"
 
-
 class CpuCollector : public Collector {
 public:
     CpuCollector() {
@@ -13,18 +12,18 @@ public:
     }
 
     void collect() override {
-        auto data = this->readFile(this->procPath);
+        auto data = read_file(this->procPath);
 
         std::smatch match;
         std::regex_search(data, match, this->regex);
 
-        auto cpuNode = new CpuNode();
-        cpuNode->load1 = std::stof(match[1]);
-        cpuNode->load5 = std::stof(match[2]);
-        cpuNode->load15 = std::stof(match[3]);
-        cpuNode->processCount = std::stoi(match[4]);
+        auto node = new CpuNode();
+        node->load1 = std::stof(match[1]);
+        node->load5 = std::stof(match[2]);
+        node->load15 = std::stof(match[3]);
+        node->processCount = std::stoi(match[4]);
 
-        this->collected.emplace_back(cpuNode);
+        this->collected.emplace_back(node);
     }
 
     std::string getName() override {
@@ -32,7 +31,7 @@ public:
     }
 
     int getCollectPeriodMs() override {
-        return 2000;
+        return 1000;
     }
 };
 

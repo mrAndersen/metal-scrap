@@ -3,12 +3,7 @@
 
 #include "Collector.h"
 
-std::string Collector::readFile(const std::string &path) {
-    std::ifstream t(path);
-    std::string string((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
 
-    return string;
-}
 
 const std::vector<Node *> &Collector::getCollectedData() {
     return this->collected;
@@ -24,6 +19,10 @@ void Collector::clear() {
     }
 
     collected.clear();
+}
+
+Collector::~Collector() {
+    this->clear();
 }
 
 #endif

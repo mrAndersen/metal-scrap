@@ -4,3 +4,6 @@
 [submodule "vendor/clickhouse"]
 	path = vendor/clickhouse
 	url = git@github.com:ClickHouse/clickhouse-cpp.git
+[submodule "vendor/yaml-cpp"]
+	path = vendor/yaml-cpp
+	url = git@github.com:jbeder/yaml-cpp.git

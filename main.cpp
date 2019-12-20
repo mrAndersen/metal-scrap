@@ -1,54 +1,51 @@
-#include "src/Collector/CpuCollector.cpp"
-#include "src/Fabric.h"
+#include "src/Master.h"
 #include "src/Clickhouse.h"
 #include "src/util.h"
 #include "test/test.h"
 #include <fmt/printf.h>
-#include <cassert>
-
+#include <yaml-cpp/yaml.h>
+#include "src/Collector/CpuCollector.cpp"
+#include "src/Collector/SelfStatsCollector.cpp"
+#include "src/Collector/HddCollector.cpp"
+#include "src/Collector/MemoryCollector.cpp"
 
 int main() {
-//    Fabric f;
-//    CpuCollector cpuCollector;
-//
-//    f.addCollector(&cpuCollector);
-//    f.work();
+    YAML::Node config;
 
-//    Clickhouse ch;
-//
-//    ch.connect();
+    std::vector<std::string> settingsFileLocations = {
+            "config.yml",
+            "../config.yml",
+            "example.yml",
+            "../example.yml"
+    };
 
-//    function_time([]() {
-//        char *p;
-//        long converted = strtol("12345511t.1", &p, 10);
-//        if (*p) {
-//            return;
-//        } else {
-//            return;
-//        }
-//    });
-//
-//
-//    function_time([]() {
-//        is_float("12345511t.1");
-//    });
-//
-//    function_time([]() {
-//        is_float_fast("12345511t.1");
-//    });
+    START_TIME;
 
-    assert(!is_float_fast("1,22"));
-    assert(is_float_fast("1.22"));
-    assert(is_float_fast("1.223321312"));
-    assert(!is_float_fast("1,223321312"));
-    assert(is_float_fast("1"));
-    assert(is_float_fast("2"));
-    assert(is_float_fast("0"));
-    assert(!is_float_fast("test"));
-    assert(!is_float_fast("test2"));
-    assert(!is_float_fast("2test"));
-    assert(!is_float_fast("t3est"));
+    for (auto &path:settingsFileLocations) {
+        if (file_exists(path)) {
+            config = YAML::LoadFile(path);
+            message_ok("Loaded configuration file = %s in %d ms", path.c_str(), END_TIME_MS);
+            break;
+        }
+    }
 
+    if (config.size() == 0) {
+        message_error("Could not load any configuration file, check your paths");
+        exit(1);
+    }
 
+    Master f(config);
+
+    CpuCollector cpuCollector;
+    SelfStatsCollector selfStatsCollector;
+    HddCollector hddCollector;
+    MemoryCollector memoryCollector;
+
+    f.addCollector(&cpuCollector);
+    f.addCollector(&selfStatsCollector);
+    f.addCollector(&hddCollector);
+    f.addCollector(&memoryCollector);
+
+    f.work();
     return 0;
 }

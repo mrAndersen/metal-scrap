@@ -1,0 +1,8 @@
+settings:
+  hostname: "my_pc"
+  verbosity: 2
+  clickhouse:
+    host: localhost
+    port: 9000
+    user: "default"
+    password: ""
