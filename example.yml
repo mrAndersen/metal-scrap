@@ -1,6 +1,8 @@
 settings:
-  hostname: "my_pc"
-  verbosity: 2
+  hostname: "test_pc"
+  verbosity: 1
+  buffer:
+    flush_period: 10000
   clickhouse:
     host: localhost
     port: 9000

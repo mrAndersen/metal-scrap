@@ -7,8 +7,8 @@
 #include <thread>
 #include <fmt/printf.h>
 #include <mutex>
-#include <yaml-cpp/yaml.h>
 #include "util.h"
+#include <yaml-cpp/yaml.h>
 
 class Clickhouse;
 
@@ -18,6 +18,8 @@ protected:
     Clickhouse *clickhouse = nullptr;
     YAML::Node config;
 public:
+    int flushPeriodMs = 2000;
+
     std::string hostname = "some_host";
 
     int verbosity = 0;
@@ -25,6 +27,8 @@ public:
     int addCollector(Collector *collector);
 
     void work();
+
+    void printMetrics();
 
     Master(const YAML::Node &config);
 };

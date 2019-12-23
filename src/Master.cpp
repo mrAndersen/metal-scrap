@@ -1,14 +1,40 @@
+
 #include "Master.h"
 
 
 Master::Master(const YAML::Node &config) : config(config) {
-    this->hostname = config["settings"]["hostname"].as<std::string>();
-    this->verbosity = config["settings"]["verbosity"].as<int>();
+    std::string host = "localhost";
+    int port = 9000;
+    std::string user = "default";
+    std::string password;
 
-    auto host = config["settings"]["clickhouse"]["host"].as<std::string>();
-    auto port = config["settings"]["clickhouse"]["port"].as<int>();
-    auto user = config["settings"]["clickhouse"]["user"].as<std::string>();
-    auto password = config["settings"]["clickhouse"]["password"].as<std::string>();
+    if (config["settings"]["hostname"].IsDefined()) {
+        this->hostname = config["settings"]["hostname"].as<std::string>();
+    }
+
+    if (config["settings"]["verbosity"].IsDefined()) {
+        this->verbosity = config["settings"]["verbosity"].as<int>();
+    }
+
+    if (config["settings"]["buffer"].IsDefined() && config["settings"]["buffer"]["flush_period"].IsDefined()) {
+        this->flushPeriodMs = config["settings"]["buffer"]["flush_period"].as<int>();
+    }
+
+    if (config["settings"]["clickhouse"]["host"].IsDefined()) {
+        host = config["settings"]["clickhouse"]["host"].as<std::string>();
+    }
+
+    if (config["settings"]["clickhouse"]["port"].IsDefined()) {
+        port = config["settings"]["clickhouse"]["port"].as<int>();
+    }
+
+    if (config["settings"]["clickhouse"]["user"].IsDefined()) {
+        user = config["settings"]["clickhouse"]["user"].as<std::string>();
+    }
+
+    if (config["settings"]["clickhouse"]["password"].IsDefined()) {
+        password = config["settings"]["clickhouse"]["password"].as<std::string>();
+    }
 
     this->clickhouse = new Clickhouse(host, port);
 
@@ -16,14 +42,18 @@ Master::Master(const YAML::Node &config) : config(config) {
     this->clickhouse->setUser(user);
     this->clickhouse->setPassword(password);
 
-    message_ok("Master created, hostname = %s", this->hostname.c_str());
+    message_ok(
+            "Master created, hostname = %s, flush period = %d",
+            this->hostname.c_str(),
+            this->flushPeriodMs
+    );
 }
+
 
 int Master::addCollector(Collector *collector) {
     this->collectors.emplace_back(collector);
 
     message_ok("Collector %s added", collector->getName().c_str());
-
     return collectors.size();
 }
 
@@ -37,7 +67,6 @@ void Master::work() {
     this->clickhouse->connect();
 
     std::thread flushThread([&]() {
-        int flushPeriodMs = 1200;
         auto buffer = new std::vector<std::pair<std::string, std::string>>();
         int retries = 100;
 
@@ -107,5 +136,14 @@ void Master::work() {
     }
 
 }
+
+void Master::printMetrics() {
+
+
+}
+
+
+
+
 
 

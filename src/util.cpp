@@ -1,6 +1,4 @@
-
 #include "util.h"
-
 
 #define ANSI_COLOR_RED     "\x1b[31m"
 #define ANSI_COLOR_GREEN   "\x1b[32m"
@@ -9,6 +7,55 @@
 #define ANSI_COLOR_MAGENTA "\x1b[35m"
 #define ANSI_COLOR_CYAN    "\x1b[36m"
 #define ANSI_COLOR_RESET   "\x1b[0m"
+
+/**
+ *
+ * @param source
+ * @param delimiter
+ * @return
+ */
+std::vector<std::string> explode(const std::string &source, const char &delimiter) {
+    auto result = std::vector<std::string>();
+    auto buffer = std::string();
+
+    for (int i = 0; i < source.size(); ++i) {
+        auto c = source[i];
+
+        if (c == delimiter) {
+            result.emplace_back(buffer);
+            buffer = "";
+        } else {
+            buffer += c;
+        }
+    }
+
+    if (!buffer.empty()) {
+        result.emplace_back(buffer);
+    }
+
+    return result;
+}
+
+/**
+ *
+ * @param source
+ * @param delimiter
+ * @return
+ */
+std::string implode(const std::vector<std::string> &source, const std::string &delimiter) {
+    auto result = std::string();
+
+    for (int i = 0; i < source.size(); ++i) {
+        result += source[i];
+
+        if (i != source.size() - 1) {
+            result += delimiter;
+        }
+    }
+
+    return result;
+}
+
 
 std::string read_file(const std::string &path) {
     std::ifstream t(path);

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(metal_scrapper)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -pthread -lstdc++fs")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -pthread")
 
 add_subdirectory(vendor/clickhouse)
 add_subdirectory(vendor/yaml-cpp)
@@ -37,7 +37,9 @@ set(
         src/Collector/HddCollector.cpp
         src/Node/HddNode.cpp
 
-        src/Collector/MemoryCollector.cpp src/Node/MemoryNode.cpp)
+        src/Collector/MemoryCollector.cpp
+        src/Node/MemoryNode.cpp
+)
 
 
 add_executable(metal_scrapper ${SOURCES})

@@ -9,13 +9,20 @@
 #include <fstream>
 #include <sys/stat.h>
 
+
 #define START_TIME auto startTime = std::chrono::high_resolution_clock::now()
 
 #define END_TIME_NS std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - startTime).count()
 #define END_TIME_MS std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - startTime).count()
 #define END_TIME_S std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - startTime).count()
 
+
+
 std::string read_file(const std::string &path);
+
+std::vector<std::string> explode(const std::string &source, const char &delimiter);
+
+std::string implode(const std::vector<std::string> &source, const std::string &delimiter);
 
 bool file_exists(const std::string &path);
 

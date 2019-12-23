@@ -3,7 +3,6 @@
 #include "src/util.h"
 #include "test/test.h"
 #include <fmt/printf.h>
-#include <yaml-cpp/yaml.h>
 #include "src/Collector/CpuCollector.cpp"
 #include "src/Collector/SelfStatsCollector.cpp"
 #include "src/Collector/HddCollector.cpp"
