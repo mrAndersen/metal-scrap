@@ -1,7 +1,7 @@
 #include "src/Master.h"
 #include "src/Clickhouse.h"
 #include "src/util.h"
-#include "test/test.h"
+//#include "test/test.h"
 #include <fmt/printf.h>
 #include "src/Collector/CpuCollector.cpp"
 #include "src/Collector/SelfStatsCollector.cpp"

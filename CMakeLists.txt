@@ -31,8 +31,8 @@ set(
         src/util.h
         src/util.cpp
 
-        test/test.h
-        test/test.cpp
+#        test/test.h
+#        test/test.cpp
 
         src/Collector/HddCollector.cpp
         src/Node/HddNode.cpp
