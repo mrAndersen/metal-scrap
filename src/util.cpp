@@ -102,7 +102,7 @@ void message_ok(const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
 
-    vfprintf(stdout, cpp_format.c_str(), args);
+    vfprintf(stderr, cpp_format.c_str(), args);
 
     va_end(args);
 }

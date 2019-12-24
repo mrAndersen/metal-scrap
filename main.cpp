@@ -10,13 +10,20 @@
 
 int main() {
     YAML::Node config;
+    std::vector<std::string> settingsFileLocations;
 
-    std::vector<std::string> settingsFileLocations = {
-            "config.yml",
-            "../config.yml",
-            "example.yml",
-            "../example.yml"
-    };
+    auto envConfig = getenv("CONFIG");
+
+    if (envConfig) {
+        settingsFileLocations.emplace_back(envConfig);
+    } else {
+        settingsFileLocations = {
+                "config.yml",
+                "../config.yml",
+                "example.yml",
+                "../example.yml"
+        };
+    }
 
     START_TIME;
 
