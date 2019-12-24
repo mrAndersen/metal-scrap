@@ -1,4 +1,4 @@
-metal-scrapper is a tool to collect machine metrics and flush it to clickhouse. To run docker contaier execute
+metal-scrapper is a tool to collect machine metrics and flush it to clickhouse. To run docker container execute
 ```bash
 docker run -d --name metal \
     -v /proc:/hostproc \
@@ -16,4 +16,4 @@ example.yml
 * ```buffer.flush_period``` - flush period in ms
 * ```clickhouse``` - section for clickhouse connection.
 
-After program will be launched - it will create 2 tables to store float and string metric values separated
+After program will be launched - it will create 2 tables to store float and string metric values separated in your clickhouse connection in default database, after that u can aggregate them via grafana, or any other tools
