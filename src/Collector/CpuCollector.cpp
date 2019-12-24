@@ -35,6 +35,15 @@ public:
     int getCollectPeriodMs() override {
         return 1000;
     }
+
+    std::vector<std::string> getMetrics() override {
+        return {
+                "cpu_load_1",
+                "cpu_load_5",
+                "cpu_load_15",
+                "cpu_ps_count",
+        };
+    }
 };
 
 #endif

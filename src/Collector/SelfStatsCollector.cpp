@@ -32,6 +32,12 @@ public:
     int getCollectPeriodMs() override {
         return 1000;
     }
+
+    std::vector<std::string> getMetrics() override {
+        return {
+                "metal_scrapper_current_rss_bytes"
+        };
+    }
 };
 
 #endif

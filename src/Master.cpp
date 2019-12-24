@@ -71,9 +71,9 @@ int Master::addCollector(Collector *collector) {
 void Master::work() {
     std::vector<Node *> buffer;
     std::mutex collectorMutex;
-
     int monitorPeriodMs = 2000;
 
+    this->printMetrics();
     this->clickhouse->connect();
 
     std::thread flushThread([&]() {
@@ -148,8 +148,15 @@ void Master::work() {
 }
 
 void Master::printMetrics() {
+    if (verbosity > 0) {
+        message_ok("Collected metric:");
 
-
+        for (auto &collector:collectors) {
+            for (auto &metric:collector->getMetrics()) {
+                message_ok(metric.c_str());
+            }
+        }
+    }
 }
 
 

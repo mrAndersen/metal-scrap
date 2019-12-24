@@ -30,6 +30,13 @@ public:
     int getCollectPeriodMs() override {
         return 1000;
     }
+
+    std::vector<std::string> getMetrics() override {
+        return {
+                "hdd_total_bytes",
+                "hdd_free_bytes"
+        };
+    }
 };
 
 #endif

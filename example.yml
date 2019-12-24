@@ -2,6 +2,16 @@ settings:
   proc_location: "/proc"
   hostname: "test_pc"
   verbosity: 1
+  collectors:
+    collector_self_stats:
+      period: 2000
+    collector_cpu:
+      period: 2000
+    collector_hdd:
+      period: 2000
+    collector_memory:
+      period: 2000
+
   buffer:
     flush_period: 10000
   clickhouse:

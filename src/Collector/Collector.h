@@ -26,6 +26,8 @@ public:
 
     virtual const std::vector<Node *> &getCollectedData();
 
+    virtual std::vector<std::string> getMetrics() = 0;
+
     virtual int getCollectPeriodMs() = 0;
 
     virtual std::string getName() = 0;
