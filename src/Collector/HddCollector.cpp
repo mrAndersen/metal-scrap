@@ -8,7 +8,9 @@
 
 class HddCollector : public Collector {
 public:
-    HddCollector() {}
+    HddCollector(Master *master) : Collector(master) {
+        master->addCollector(this);
+    }
 
     void collect() override {
         struct statvfs stats{};

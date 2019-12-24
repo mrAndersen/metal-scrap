@@ -6,9 +6,11 @@
 
 class SelfStatsCollector : public Collector {
 public:
-    SelfStatsCollector() {
+    SelfStatsCollector(Master *master) : Collector(master) {
         this->regex = std::regex(R"(.*VmRSS:\s+(\d+).*)");
-        this->procPath = "/proc/self/status";
+        this->procPath = master->procLocation + "/self/status";
+
+        master->addCollector(this);
     }
 
     void collect() override {

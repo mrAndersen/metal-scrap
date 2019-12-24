@@ -8,6 +8,10 @@ Master::Master(const YAML::Node &config) : config(config) {
     std::string user = "default";
     std::string password;
 
+    if (config["settings"]["proc_location"].IsDefined()) {
+        this->procLocation = config["settings"]["proc_location"].as<std::string>();
+    }
+
     if (config["settings"]["hostname"].IsDefined()) {
         this->hostname = config["settings"]["hostname"].as<std::string>();
     }
@@ -36,6 +40,11 @@ Master::Master(const YAML::Node &config) : config(config) {
         password = config["settings"]["clickhouse"]["password"].as<std::string>();
     }
 
+    if (!file_exists(this->procLocation + "/uptime")) {
+        message_error("Proc location %s is invalid or does not exist, correct your config", this->procLocation.c_str());
+        exit(1);
+    }
+
     this->clickhouse = new Clickhouse(host, port);
 
     this->clickhouse->setMaster(this);
@@ -43,8 +52,9 @@ Master::Master(const YAML::Node &config) : config(config) {
     this->clickhouse->setPassword(password);
 
     message_ok(
-            "Master created, hostname = %s, flush period = %d",
+            "Master created, hostname = %s, proc_location = %s, flush period = %d",
             this->hostname.c_str(),
+            this->procLocation.c_str(),
             this->flushPeriodMs
     );
 }

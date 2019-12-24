@@ -3,14 +3,8 @@
 
 #include "Collector.h"
 
-
-
 const std::vector<Node *> &Collector::getCollectedData() {
     return this->collected;
-}
-
-Collector::Collector() {
-
 }
 
 void Collector::clear() {
@@ -23,6 +17,10 @@ void Collector::clear() {
 
 Collector::~Collector() {
     this->clear();
+}
+
+Collector::Collector(Master *master) {
+    this->master = master;
 }
 
 #endif

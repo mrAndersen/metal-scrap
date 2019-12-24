@@ -1,7 +1,16 @@
-FROM debian:buster
+FROM alpine:edge
 
-RUN apt-get update && apt-get install -y \
-    libc-dev git gcc g++ cmake gdb
+# setup APK
+RUN apk update \
+    && apk upgrade \
+    && apk add ca-certificates \
+    && apk add libc-dev gcc make \
+    && apk add bash \
+    && apk add g++ \
+    && apk add git \
+    && apk add cmake \
+    && apk add gdb \
+    && apk add musl-dev
 
 WORKDIR /metal
 
@@ -18,5 +27,5 @@ RUN cmake -B /metal/bin -DCMAKE_BUILD_TYPE=Release . \
     && cd /metal/bin \
     && make -j 8 -o2
 
-CMD /metal/bin/metal_scrapper
-#CMD tail -f /dev/null
+#CMD /metal/bin/metal_scrapper
+CMD tail -f /dev/null

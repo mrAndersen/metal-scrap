@@ -35,15 +35,10 @@ int main() {
 
     Master f(config);
 
-    CpuCollector cpuCollector;
-    SelfStatsCollector selfStatsCollector;
-    HddCollector hddCollector;
-    MemoryCollector memoryCollector;
-
-    f.addCollector(&cpuCollector);
-    f.addCollector(&selfStatsCollector);
-    f.addCollector(&hddCollector);
-    f.addCollector(&memoryCollector);
+    CpuCollector cpuCollector(&f);
+    SelfStatsCollector selfStatsCollector(&f);
+    HddCollector hddCollector(&f);
+    MemoryCollector memoryCollector(&f);
 
     f.work();
     return 0;

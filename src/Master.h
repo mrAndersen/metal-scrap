@@ -12,6 +12,8 @@
 
 class Clickhouse;
 
+class Collector;
+
 class Master {
 protected:
     std::vector<Collector *> collectors;
@@ -21,6 +23,8 @@ public:
     int flushPeriodMs = 2000;
 
     std::string hostname = "some_host";
+
+    std::string procLocation = "/proc";
 
     int verbosity = 0;
 

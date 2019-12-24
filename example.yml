@@ -1,4 +1,5 @@
 settings:
+  proc_location: "/proc"
   hostname: "test_pc"
   verbosity: 1
   buffer:

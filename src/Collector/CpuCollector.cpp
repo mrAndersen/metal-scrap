@@ -6,9 +6,11 @@
 
 class CpuCollector : public Collector {
 public:
-    CpuCollector() {
+    CpuCollector(Master *master) : Collector(master) {
         this->regex = std::regex(R"((\d+.\d+)\s(\d+.\d+)\s(\d+.\d+)\s\d+\/(\d+)\s\d+)");
-        this->procPath = "/proc/loadavg";
+        this->procPath = master->procLocation + "/loadavg";
+
+        master->addCollector(this);
     }
 
     void collect() override {

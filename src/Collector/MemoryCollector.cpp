@@ -6,9 +6,11 @@
 
 class MemoryCollector : public Collector {
 public:
-    MemoryCollector() {
+    MemoryCollector(Master *master) : Collector(master) {
         this->regex = std::regex(R"(.*MemTotal:\s+(\d+).*MemAvailable:\s+(\d+))");
-        this->procPath = "/proc/meminfo";
+        this->procPath = master->procLocation + "/meminfo";
+
+        master->addCollector(this);
     }
 
     void collect() override {

@@ -7,15 +7,18 @@
 #include <fstream>
 #include "../Node/Node.h"
 #include "../util.h"
+#include "../Master.h"
 
+class Master;
 
 class Collector {
 protected:
     std::string procPath;
     std::regex regex;
     std::vector<Node *> collected;
+    Master *master;
 public:
-    Collector();
+    Collector(Master *master);
 
     virtual void collect() = 0;
 
