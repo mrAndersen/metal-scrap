@@ -23,4 +23,16 @@ Collector::Collector(Master *master) {
     this->master = master;
 }
 
+int Collector::getPeriodFromConfig() {
+    if (
+            master->config["settings"]["collectors"].IsDefined() &&
+            master->config["settings"]["collectors"][getName()].IsDefined() &&
+            master->config["settings"]["collectors"][getName()]["period"].IsDefined()
+            ) {
+        return master->config["settings"]["collectors"][getName()]["period"].as<int>();
+    }
+
+    return 1000;
+}
+
 #endif

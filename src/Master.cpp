@@ -63,7 +63,7 @@ Master::Master(const YAML::Node &config) : config(config) {
 int Master::addCollector(Collector *collector) {
     this->collectors.emplace_back(collector);
 
-    message_ok("Collector %s added", collector->getName().c_str());
+    message_ok("Collector %s added, period = %dms", collector->getName().c_str(), collector->getCollectPeriodMs());
     return collectors.size();
 }
 

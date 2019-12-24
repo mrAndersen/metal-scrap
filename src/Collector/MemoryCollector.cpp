@@ -32,7 +32,7 @@ public:
     }
 
     int getCollectPeriodMs() override {
-        return 1000;
+        return getPeriodFromConfig();
     }
 
     std::vector<std::string> getMetrics() override {

@@ -18,8 +18,10 @@ class Master {
 protected:
     std::vector<Collector *> collectors;
     Clickhouse *clickhouse = nullptr;
-    YAML::Node config;
+
 public:
+    YAML::Node config;
+
     int flushPeriodMs = 2000;
 
     std::string hostname = "some_host";

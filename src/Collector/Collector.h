@@ -17,6 +17,8 @@ protected:
     std::regex regex;
     std::vector<Node *> collected;
     Master *master;
+
+    int getPeriodFromConfig();
 public:
     Collector(Master *master);
 
