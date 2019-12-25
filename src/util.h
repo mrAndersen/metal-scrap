@@ -1,6 +1,7 @@
 #ifndef METAL_SCRAPPER_UTIL_H
 #define METAL_SCRAPPER_UTIL_H
 
+#include <iostream>
 #include <string>
 #include <fmt/format.h>
 #include <ctime>

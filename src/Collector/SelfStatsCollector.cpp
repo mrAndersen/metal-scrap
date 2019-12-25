@@ -7,21 +7,21 @@
 class SelfStatsCollector : public Collector {
 public:
     SelfStatsCollector(Master *master) : Collector(master) {
-        this->regex = std::regex(R"(.*VmRSS:\s+(\d+).*)");
-        this->procPath = master->procLocation + "/self/status";
+        RE2::Options options;
+        options.set_dot_nl(true);
 
+        this->regex = new RE2(R"(.*VmRSS:\s+(\d+).*)", options);
+        assert(this->regex->ok());
+
+        this->procPath = master->procLocation + "/self/status";
         master->addCollector(this);
     }
 
     void collect() override {
         auto data = read_file(this->procPath);
-
-        std::smatch match;
-        std::regex_search(data, match, this->regex);
-
         auto node = new SelfStatsNode();
-        node->bytesUsed = std::stol(match[1]) * 1024;
 
+        RE2::PartialMatch(data, *this->regex, &node->bytesUsed);
         this->collected.emplace_back(node);
     }
 

@@ -5,6 +5,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -pthread")
 
 add_subdirectory(vendor/clickhouse)
 add_subdirectory(vendor/yaml-cpp)
+add_subdirectory(vendor/re2)
 
 set(CMAKE_CXX_STANDARD 17)
 set(
@@ -49,6 +50,7 @@ target_link_libraries(
         metal_scrapper
         clickhouse-cpp-lib
         yaml-cpp
+        re2
 )
 
 target_include_directories(
@@ -57,4 +59,5 @@ target_include_directories(
         vendor/yaml-cpp/include
         vendor/clickhouse
         vendor/fmt/include
+        vendor/re2
 )

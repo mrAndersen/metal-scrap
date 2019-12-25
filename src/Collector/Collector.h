@@ -8,13 +8,15 @@
 #include "../Node/Node.h"
 #include "../util.h"
 #include "../Master.h"
+#include <re2/re2.h>
+#include <cassert>
 
 class Master;
 
 class Collector {
 protected:
     std::string procPath;
-    std::regex regex;
+    RE2 *regex;
     std::vector<Node *> collected;
     Master *master;
 

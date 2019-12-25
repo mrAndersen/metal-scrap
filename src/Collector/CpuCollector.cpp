@@ -7,7 +7,9 @@
 class CpuCollector : public Collector {
 public:
     CpuCollector(Master *master) : Collector(master) {
-        this->regex = std::regex(R"((\d+.\d+)\s(\d+.\d+)\s(\d+.\d+)\s\d+\/(\d+)\s\d+)");
+        this->regex = new RE2(R"((\d+.\d+)\s(\d+.\d+)\s(\d+.\d+)\s\d+\/(\d+)\s\d+)");
+        assert(this->regex->ok());
+
         this->procPath = master->procLocation + "/loadavg";
 
         master->addCollector(this);
@@ -15,15 +17,9 @@ public:
 
     void collect() override {
         auto data = read_file(this->procPath);
-
-        std::smatch match;
-        std::regex_search(data, match, this->regex);
-
         auto node = new CpuNode();
-        node->load1 = std::stof(match[1]);
-        node->load5 = std::stof(match[2]);
-        node->load15 = std::stof(match[3]);
-        node->processCount = std::stoi(match[4]);
+
+        RE2::PartialMatch(data, *this->regex, &node->load1, &node->load5, &node->load15, &node->processCount);
 
         this->collected.emplace_back(node);
     }

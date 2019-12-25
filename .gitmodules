@@ -7,3 +7,6 @@
 [submodule "vendor/yaml-cpp"]
 	path = vendor/yaml-cpp
 	url = git@github.com:jbeder/yaml-cpp.git
+[submodule "vendor/re2"]
+	path = vendor/re2
+	url = git@github.com:google/re2.git
