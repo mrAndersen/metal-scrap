@@ -22,6 +22,8 @@ public:
         auto node = new SelfStatsNode();
 
         RE2::PartialMatch(data, *this->regex, &node->bytesUsed);
+        node->bytesUsed *= 1024;
+
         this->collected.emplace_back(node);
     }
 

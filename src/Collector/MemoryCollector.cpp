@@ -23,6 +23,9 @@ public:
         auto node = new MemoryNode();
         RE2::PartialMatch(data, *this->regex, &node->totalBytes, &node->freeBytes);
 
+        node->totalBytes *= 1024;
+        node->freeBytes *= 1024;
+
         this->collected.emplace_back(node);
     }
 
