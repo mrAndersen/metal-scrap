@@ -6,7 +6,7 @@ docker run -d --name metal \
     -v /proc:/hostproc \
     -v /docker-data/metal_config.yml:/metal-config.yml \
     -e CONFIG=/metal-config.yml \
-mrandersen7/metal:1.1
+mrandersen7/metal:1.5
 ```
 ### Configs
 This will volume your configuration file and use it to run the daemon. Example config is located in
