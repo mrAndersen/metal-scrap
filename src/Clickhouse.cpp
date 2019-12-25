@@ -1,77 +1,68 @@
 #include "Clickhouse.h"
 
-
-bool Clickhouse::writeStringBlock(const std::vector<std::pair<std::string, std::string>> &buffer) {
-    auto stringBlock = std::make_shared<clickhouse::Block>();
-
-    auto chTitle = std::make_shared<clickhouse::ColumnString>();
-    auto chStringValue = std::make_shared<clickhouse::ColumnString>();
-    auto chHostname = std::make_shared<clickhouse::ColumnString>();
-
-    for (auto &stringPair:buffer) {
-        chTitle->Append(stringPair.first);
-        chStringValue->Append(stringPair.second);
-        chHostname->Append(this->master->hostname);
-    }
-
-    stringBlock->AppendColumn("metric_title", chTitle);
-    stringBlock->AppendColumn("metric_value", chStringValue);
-    stringBlock->AppendColumn("hostname", chHostname);
-
-    connectionMutex.lock();
-    client->Insert("metal_string", *stringBlock);
-    connectionMutex.unlock();
-
-    return true;
-}
-
-bool Clickhouse::writeFloatBlock(const std::vector<std::pair<std::string, float>> &buffer) {
-    auto floatBlock = std::make_shared<clickhouse::Block>();
-
-    auto chTitle = std::make_shared<clickhouse::ColumnString>();
-    auto chFloatValue = std::make_shared<clickhouse::ColumnFloat32>();
-    auto chHostname = std::make_shared<clickhouse::ColumnString>();
-
-    for (auto &stringPair:buffer) {
-        chTitle->Append(stringPair.first);
-        chFloatValue->Append(stringPair.second);
-        chHostname->Append(this->master->hostname);
-    }
-
-    floatBlock->AppendColumn("metric_title", chTitle);
-    floatBlock->AppendColumn("metric_value", chFloatValue);
-    floatBlock->AppendColumn("hostname", chHostname);
-
-    connectionMutex.lock();
-    client->Insert("metal_float", *floatBlock);
-    connectionMutex.unlock();
-
-    return true;
-}
-
-bool Clickhouse::write(std::vector<std::pair<std::string, std::string>> *buffer) {
-    std::vector<std::pair<std::string, float>> floatBuffer;
-    std::vector<std::pair<std::string, std::string>> stringBuffer;
-
+bool Clickhouse::write(std::vector<Node *> *buffer) {
     START_TIME;
 
-    for (auto &pair:*buffer) {
-        auto title = pair.first;
-        auto value = pair.second;
+    auto sBlock = std::make_shared<clickhouse::Block>();
+    auto fBlock = std::make_shared<clickhouse::Block>();
 
-        if (is_float(value)) {
-            floatBuffer.emplace_back(std::pair<std::string, float>(title, std::stof(value)));
-        } else {
-            stringBuffer.emplace_back(pair);
+    auto sTitle = std::make_shared<clickhouse::ColumnString>();
+    auto sValue = std::make_shared<clickhouse::ColumnString>();
+    auto sHostname = std::make_shared<clickhouse::ColumnString>();
+    auto sDateTime = std::make_shared<clickhouse::ColumnDateTime>();
+
+    auto fTitle = std::make_shared<clickhouse::ColumnString>();
+    auto fValue = std::make_shared<clickhouse::ColumnFloat32>();
+    auto fHostname = std::make_shared<clickhouse::ColumnString>();
+    auto fDateTime = std::make_shared<clickhouse::ColumnDateTime>();
+
+    int i = 0;
+
+    for (auto &node:*buffer) {
+        auto metrics = node->prepare();
+
+        for (auto &metric:metrics) {
+            for (auto &v:metric) {
+                auto title = v.first;
+                auto value = v.second;
+
+                if (is_float(value)) {
+                    fTitle->Append(title);
+                    fValue->Append(std::stof(value));
+                    fHostname->Append(master->hostname);
+                    fDateTime->Append(node->time);
+                } else {
+                    fTitle->Append(title);
+                    sValue->Append(value);
+                    fHostname->Append(master->hostname);
+                    fDateTime->Append(node->time);
+                }
+
+                i++;
+            }
         }
     }
 
+    fBlock->AppendColumn("metric_title", fTitle);
+    fBlock->AppendColumn("metric_value", fValue);
+    fBlock->AppendColumn("hostname", fHostname);
+    fBlock->AppendColumn("datetime", fDateTime);
+
+    sBlock->AppendColumn("metric_title", sTitle);
+    sBlock->AppendColumn("metric_value", sValue);
+    sBlock->AppendColumn("hostname", sHostname);
+    sBlock->AppendColumn("datetime", sDateTime);
+
     std::thread f([&]() {
-        this->writeFloatBlock(floatBuffer);
+        connectionMutex.lock();
+        client->Insert("metal_float", *fBlock);
+        connectionMutex.unlock();
     });
 
     std::thread s([&]() {
-        this->writeStringBlock(stringBuffer);
+        connectionMutex.lock();
+        client->Insert("metal_string", *sBlock);
+        connectionMutex.unlock();
     });
 
     f.join();
@@ -79,7 +70,7 @@ bool Clickhouse::write(std::vector<std::pair<std::string, std::string>> *buffer)
 
     if (this->master->verbosity >= 1) {
         message_ok("%-40s %d ms", "buffer flushed in", END_TIME_MS);
-        message_ok("%-40s %d", "rows inserted", buffer->size());
+        message_ok("%-40s %d", "rows inserted", i);
     }
 
     return true;

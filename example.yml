@@ -13,7 +13,7 @@ settings:
       period: 2000
 
   buffer:
-    flush_period: 10000
+    flush_period: 12500
   clickhouse:
     host: localhost
     port: 9000

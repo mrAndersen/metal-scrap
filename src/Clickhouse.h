@@ -23,12 +23,8 @@ protected:
     std::string user = "default";
     std::string password = "";
 
-    bool writeFloatBlock(const std::vector<std::pair<std::string, float>> &buffer);
-
-    bool writeStringBlock(const std::vector<std::pair<std::string, std::string>> &buffer);
-
 public:
-    Clickhouse(const std::string &host = "localhost",const int &port = 9000);
+    Clickhouse(const std::string &host = "localhost", const int &port = 9000);
 
     bool connect();
 
@@ -36,7 +32,7 @@ public:
 
     void tryCreateTables();
 
-    bool write(std::vector<std::pair<std::string, std::string>> *buffer);
+    bool write(std::vector<Node *> *buffer);
 
     void setHost(const std::string &host);
 

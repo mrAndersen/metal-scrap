@@ -11,13 +11,15 @@ public:
     unsigned long totalBytes = 0;
     unsigned long freeBytes = 0;
 
-    std::vector<std::pair<std::string, std::string>> prepare() override {
-        std::vector<std::pair<std::string, std::string>> map;
+    std::vector<std::map<std::string, std::string>> prepare() override {
+        std::vector<std::map<std::string, std::string>> result;
+        std::map<std::string, std::string> m;
 
-        map.emplace_back(std::pair("hdd_total_bytes", std::to_string(this->totalBytes)));
-        map.emplace_back(std::pair("hdd_free_bytes", std::to_string(this->freeBytes)));
+        m["hdd_total_bytes"] = std::to_string(this->totalBytes);
+        m["hdd_free_bytes"] = std::to_string(this->freeBytes);
 
-        return map;
+        result.emplace_back(m);
+        return result;
     }
 };
 

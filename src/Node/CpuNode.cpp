@@ -13,15 +13,17 @@ public:
     float load15 = 0;
     int processCount = 0;
 
-    std::vector<std::pair<std::string, std::string>> prepare() override {
-        std::vector<std::pair<std::string, std::string>> map;
+    std::vector<std::map<std::string, std::string>> prepare() override {
+        std::vector<std::map<std::string, std::string>> result;
+        std::map<std::string, std::string> m;
 
-        map.emplace_back(std::pair("cpu_load_1", std::to_string(this->load1)));
-        map.emplace_back(std::pair("cpu_load_5", std::to_string(this->load5)));
-        map.emplace_back(std::pair("cpu_load_15", std::to_string(this->load15)));
-        map.emplace_back(std::pair("cpu_ps_count", std::to_string(this->processCount)));
+        m["cpu_load_1"] = std::to_string(this->load1);
+        m["cpu_load_5"] = std::to_string(this->load5);
+        m["cpu_load_15"] = std::to_string(this->load15);
+        m["cpu_ps_count"] = std::to_string(this->processCount);
 
-        return map;
+        result.emplace_back(m);
+        return result;
     }
 };
 

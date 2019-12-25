@@ -77,7 +77,7 @@ void Master::work() {
     this->clickhouse->connect();
 
     std::thread flushThread([&]() {
-        auto buffer = new std::vector<std::pair<std::string, std::string>>();
+        auto buffer = new std::vector<Node *>();
         int retries = 100;
 
         while (true) {
@@ -87,13 +87,10 @@ void Master::work() {
                 }
 
                 collectorMutex.lock();
-                auto data = collector->getCollectedData();
-                for (auto &node:data) {
-                    auto local = node->prepare();
-                    buffer->insert(buffer->end(), local.begin(), local.end());
-                }
 
-                collector->clear();
+                auto collected = collector->getCollectedData();
+                buffer->insert(buffer->end(), collected.begin(), collected.end());
+
                 collectorMutex.unlock();
             }
 
@@ -111,8 +108,12 @@ void Master::work() {
             }
 
             this->clickhouse->write(buffer);
-            buffer->clear();
 
+            for (auto &collector:collectors) {
+                collector->clear();
+            }
+
+            buffer->clear();
 
             std::this_thread::sleep_for(std::chrono::milliseconds(flushPeriodMs));
         }
