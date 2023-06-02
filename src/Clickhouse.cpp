@@ -27,8 +27,10 @@ bool Clickhouse::write(std::vector<Node *> *buffer) {
 
                 if (is_float(value)) {
                     fValueCol->Append(std::stof(value));
+                    sValueCol->Append("");
                 } else {
                     sValueCol->Append(value);
+                    fValueCol->Append(0.0);
                 }
 
                 i++;
