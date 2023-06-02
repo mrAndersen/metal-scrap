@@ -39,7 +39,7 @@ bool Clickhouse::write(std::vector<Node *> *buffer) {
     block->AppendColumn("metric", titleCol);
     block->AppendColumn("stringValue", sValueCol);
     block->AppendColumn("floatValue", fValueCol);
-    block->AppendColumn("datetime", dateTimeCol);
+    block->AppendColumn("time", dateTimeCol);
 
     std::thread f([&]() {
         connectionMutex.lock();
