@@ -3,39 +3,32 @@
 bool Clickhouse::write(std::vector<Node *> *buffer) {
     START_TIME;
 
-    auto sBlock = std::make_shared<clickhouse::Block>();
-    auto fBlock = std::make_shared<clickhouse::Block>();
+    auto block = std::make_shared<clickhouse::Block>();
 
-    auto sTitle = std::make_shared<clickhouse::ColumnString>();
-    auto sValue = std::make_shared<clickhouse::ColumnString>();
-    auto sHostname = std::make_shared<clickhouse::ColumnString>();
-    auto sDateTime = std::make_shared<clickhouse::ColumnDateTime>();
-
-    auto fTitle = std::make_shared<clickhouse::ColumnString>();
-    auto fValue = std::make_shared<clickhouse::ColumnFloat32>();
-    auto fHostname = std::make_shared<clickhouse::ColumnString>();
-    auto fDateTime = std::make_shared<clickhouse::ColumnDateTime>();
+    auto titleCol = std::make_shared<clickhouse::ColumnString>();
+    auto sValueCol = std::make_shared<clickhouse::ColumnString>();
+    auto fValueCol = std::make_shared<clickhouse::ColumnFloat32>();
+    auto hostnameCol = std::make_shared<clickhouse::ColumnString>();
+    auto dateTimeCol = std::make_shared<clickhouse::ColumnDateTime>();
 
     int i = 0;
 
-    for (auto &node:*buffer) {
+    for (auto &node: *buffer) {
         auto metrics = node->prepare();
 
-        for (auto &metric:metrics) {
-            for (auto &v:metric) {
+        for (auto &metric: metrics) {
+            for (auto &v: metric) {
                 auto title = v.first;
                 auto value = v.second;
 
+                titleCol->Append(title);
+                hostnameCol->Append(master->hostname);
+                dateTimeCol->Append(node->time);
+
                 if (is_float(value)) {
-                    fTitle->Append(title);
-                    fValue->Append(std::stof(value));
-                    fHostname->Append(master->hostname);
-                    fDateTime->Append(node->time);
+                    fValueCol->Append(std::stof(value));
                 } else {
-                    fTitle->Append(title);
-                    sValue->Append(value);
-                    fHostname->Append(master->hostname);
-                    fDateTime->Append(node->time);
+                    sValueCol->Append(value);
                 }
 
                 i++;
@@ -43,30 +36,18 @@ bool Clickhouse::write(std::vector<Node *> *buffer) {
         }
     }
 
-    fBlock->AppendColumn("metric_title", fTitle);
-    fBlock->AppendColumn("metric_value", fValue);
-    fBlock->AppendColumn("hostname", fHostname);
-    fBlock->AppendColumn("datetime", fDateTime);
-
-    sBlock->AppendColumn("metric_title", sTitle);
-    sBlock->AppendColumn("metric_value", sValue);
-    sBlock->AppendColumn("hostname", sHostname);
-    sBlock->AppendColumn("datetime", sDateTime);
+    block->AppendColumn("metric", titleCol);
+    block->AppendColumn("stringValue", sValueCol);
+    block->AppendColumn("floatValue", fValueCol);
+    block->AppendColumn("datetime", dateTimeCol);
 
     std::thread f([&]() {
         connectionMutex.lock();
-        client->Insert("metal_float", *fBlock);
-        connectionMutex.unlock();
-    });
-
-    std::thread s([&]() {
-        connectionMutex.lock();
-        client->Insert("metal_string", *sBlock);
+        client->Insert(table, *block);
         connectionMutex.unlock();
     });
 
     f.join();
-    s.join();
 
     if (this->master->verbosity >= 1) {
         message_ok("%-40s %d ms", "buffer flushed in", END_TIME_MS);
@@ -74,33 +55,6 @@ bool Clickhouse::write(std::vector<Node *> *buffer) {
     }
 
     return true;
-}
-
-void Clickhouse::tryCreateTables() {
-    std::string floatTableSql = R"(
-create table if not exists metal_float
-(
-    metric_title String,
-    metric_value Float32,
-    date         Date default toDate(datetime),
-    datetime     DateTime default now(),
-    hostname     String
-) engine = MergeTree(date, (metric_title, metric_value, hostname), 4096);
-)";
-
-    std::string stringTableSql = R"(
-create table if not exists metal_string
-(
-    metric_title String,
-    metric_value String,
-    date         Date default toDate(datetime),
-    datetime     DateTime default now(),
-    hostname     String
-) engine = MergeTree(date, (metric_title, metric_value, hostname), 4096);
-)";
-
-    this->client->Execute(clickhouse::Query(floatTableSql));
-    this->client->Execute(clickhouse::Query(stringTableSql));
 }
 
 bool Clickhouse::isConnected() {
@@ -122,8 +76,6 @@ bool Clickhouse::connect() {
     client = new clickhouse::Client(options);
     client->Ping();
 
-    this->tryCreateTables();
-
     message_ok("Connected to clickhouse at %s:%s\n", options.host.c_str(), std::to_string(options.port).c_str());
     return true;
 }
@@ -144,9 +96,16 @@ void Clickhouse::setPassword(const std::string &password) {
     Clickhouse::password = password;
 }
 
-Clickhouse::Clickhouse(const std::string &host, const int &port) {
+Clickhouse::Clickhouse(
+        const std::string &host,
+        const int &port,
+        const std::string &password,
+        const std::string &table
+) {
     this->host = host;
     this->port = port;
+    this->password = password;
+    this->table = table;
 }
 
 void Clickhouse::setMaster(Master *master) {

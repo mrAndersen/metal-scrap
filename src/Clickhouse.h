@@ -22,15 +22,19 @@ protected:
     int port = 9000;
     std::string user = "default";
     std::string password = "";
+    std::string table = "admile.system_distributed_v3";
 
 public:
-    Clickhouse(const std::string &host = "localhost", const int &port = 9000);
+    Clickhouse(
+            const std::string &host = "localhost",
+            const int &port = 9000,
+            const std::string &password = "",
+            const std::string &table = "admile.system_distributed_v3"
+    );
 
     bool connect();
 
     bool isConnected();
-
-    void tryCreateTables();
 
     bool write(std::vector<Node *> *buffer);
 

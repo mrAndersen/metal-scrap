@@ -19,3 +19,4 @@ settings:
     port: 9000
     user: "default"
     password: ""
+    table: "default.table"

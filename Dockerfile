@@ -24,6 +24,6 @@ COPY ./main.cpp /metal/main.cpp
 
 RUN cmake -B /metal/bin -DCMAKE_BUILD_TYPE=Release . \
     && cd /metal/bin \
-    && make -j 8 -o2
+    && make -j8
 
 CMD /metal/bin/metal_scrapper
