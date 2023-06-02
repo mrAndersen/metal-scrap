@@ -7,7 +7,7 @@ bool Clickhouse::write(std::vector<Node *> *buffer) {
 
     auto titleCol = std::make_shared<clickhouse::ColumnString>();
     auto sValueCol = std::make_shared<clickhouse::ColumnString>();
-    auto fValueCol = std::make_shared<clickhouse::ColumnFloat32>();
+    auto fValueCol = std::make_shared<clickhouse::ColumnFloat64>();
     auto hostnameCol = std::make_shared<clickhouse::ColumnString>();
     auto dateTimeCol = std::make_shared<clickhouse::ColumnDateTime>();
 
